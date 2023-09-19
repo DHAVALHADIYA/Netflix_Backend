@@ -7,11 +7,16 @@ const bodyParser = require("body-parser");
 const netflix_db = require("./config/config");
 netflix_db();
 
+const userRoutes = require("./Routes/userRoutes");
+
 const app = express();
 const port = 5000 || process.env.PORT;
 app.use(cors());
 app.use(express.json());
 app.use(bodyParser.urlencoded({ extended: true }));
+
+app.use("/", userRoutes);
+
 
 mongoose.set("strictQuery", false);
 
