@@ -2,7 +2,10 @@ const mongoose = require("mongoose");
 
 const netflix_db = async () => {
   mongoose
-    .connect(process.env.DB_URI)
+    .connect(process.env.DB_URI, {
+      useNewUrlParser: true,
+      useUnifiedTopology: true,
+    })
     .then(() => {
       console.log("Database Connection Successfully.....");
     })
