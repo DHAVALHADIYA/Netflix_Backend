@@ -1,4 +1,5 @@
 const userModel = require("../Model/userModel.js");
+const favouritesModel = require("../Model/favouritesModel.js");
 
 const acoountDeleteController = async (req, res) => {
   try {
@@ -12,24 +13,24 @@ const acoountDeleteController = async (req, res) => {
         message: "User not found , you are not valid user",
       });
     } else {
-      const result = await userModel.deleteOne({ email: email });
-      console.log(result);
+      const result = await favouritesModel.find({ email: email });
       if (!result) {
         res.status(503).send({
           success: false,
-          message: "The server is down, Please try again later",
+          message: "Error in accesing data",
         });
       } else {
         res.status(200).send({
           success: true,
-          message: "The account is deleted successfully",
+          message: "data fetch successfully..",
+          result,
         });
       }
     }
   } catch (error) {
     res.status(500).send({
       success: false,
-      message: "Error in fetching data",
+      message: "Server is down try again after some time",
       error,
     });
   }
