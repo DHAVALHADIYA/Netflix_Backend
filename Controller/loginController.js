@@ -6,14 +6,14 @@ const loginController = async (req, res) => {
   try {
     const { email, password } = req.body;
 
-    // check student
-    const user = await userModel.findOne({ email: email });
+    // check user
+    const user = await userModel.findOne({ email });
 
-    // if student doesn't exist
+    // if user doesn't exist
     if (!user) {
       return res.status(404).send({
         success: false,
-        message: "User not found please register first",
+        message: "User not found. Please register first",
       });
     }
 

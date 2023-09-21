@@ -6,22 +6,22 @@ const registerController = async (req, res) => {
   try {
     const { email, password } = req.body;
 
-    // check user
-    const user1 = await userModel.findOne({ email: email });
+    //check admin
+    const exisitingUser = await userModel.findOne({ email: email });
 
-    // if user doesn't exist
-    if (user1) {
+    //if admin exist
+    if (exisitingUser) {
       return res.status(409).send({
         success: false,
-        message: "User is already registered using this email",
+        message: "Already Registered please login",
       });
     }
 
     // Password Hashing
-    const saltRounds = 17;
+    const saltRounds = 10;
     const hashedPassword = await bcrypt.hash(password, saltRounds);
 
-    //save the student in database
+    //save the admin in database
     const user = await userModel.create({
       email,
       password: hashedPassword,
@@ -31,7 +31,7 @@ const registerController = async (req, res) => {
     const token = jwt.sign({ user }, process.env.TOKEN_KEY);
 
     if (user) {
-      res.status(200).send({
+      res.status(201).send({
         success: true,
         message: "User Registered Successfully..",
         token,
@@ -41,7 +41,7 @@ const registerController = async (req, res) => {
   } catch (error) {
     res.status(500).send({
       success: false,
-      message: "error is ther",
+      message: "Error in Registeration",
       error,
     });
   }
