@@ -17,11 +17,14 @@ app.use(bodyParser.urlencoded({ extended: true }));
 
 app.use("/", userRoutes);
 
-
 mongoose.set("strictQuery", false);
 
 app.get("/", (req, res) => {
   res.send("The backend is successfully deployed");
+});
+
+app.get("/hello", (req, res) => {
+  res.send("check");
 });
 
 app.listen(port, () => {
