@@ -23,15 +23,25 @@ const favouriteController = async (req, res) => {
           });
         }
       } else {
-        user1.movie.push(movie);
-
-        await user1.save();
-
-        if (user1) {
-          res.status(200).send({
+        const movied_already = await favouritesModel.findOne({
+          movie: movie,
+        });
+        if (movied_already) {
+          res.status(201).send({
             success: true,
-            message: "Favourites movies added been successfully..",
+            message: "The movie already exist in Favourites...",
           });
+        } else {
+          user1.movie.push(movie);
+
+          await user1.save();
+
+          if (user1) {
+            res.status(200).send({
+              success: true,
+              message: "Favourites movies added been successfully..",
+            });
+          }
         }
       }
     } else {
