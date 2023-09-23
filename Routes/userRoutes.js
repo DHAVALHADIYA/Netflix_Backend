@@ -1,4 +1,5 @@
 const express = require("express");
+const verifytoken = require("../MiddleWare/auth");
 const router = express.Router();
 const userRegisterController = require("../Controller/registerController");
 const userLoginController = require("../Controller/loginController");
@@ -6,7 +7,7 @@ const accountDeleteController = require("../Controller/accountDeleteController")
 const favouritesController = require("../Controller/favouritesController");
 const getfavMovieController = require("../Controller/getfavMovieController");
 const favMovieDeleteController = require("../Controller/favMovieDeleteController");
-const verifytoken = require("../MiddleWare/auth");
+const oldUserController = require("../Controller/oldUserController");
 
 //SIGNUP || METHOD POST
 router.post("/userregister", userRegisterController);
@@ -20,10 +21,13 @@ router.post("/accountDelete", verifytoken, accountDeleteController);
 //ADDED FAV MOVIES || METHOD POST
 router.post("/addfav", verifytoken, favouritesController);
 
-//ADDED FAV MOVIES || METHOD GET
+//GET FAV MOVIES || METHOD GET
 router.get("/getfav", verifytoken, getfavMovieController);
 
-//ADDED FAV MOVIES || METHOD GET
-router.post("/favdlt", verifytoken , favMovieDeleteController);
+//DLT FAV MOVIES || METHOD POST
+router.post("/favdlt", verifytoken, favMovieDeleteController);
+
+//ADDED OLD ACCOUNT || METHOD POST
+router.post("/olduser", verifytoken, oldUserController);
 
 module.exports = router;
