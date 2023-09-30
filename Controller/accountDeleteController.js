@@ -13,7 +13,6 @@ const acoountDeleteController = async (req, res) => {
       });
     } else {
       const result = await userModel.deleteOne({ email: email });
-      console.log(result);
       if (!result) {
         res.status(503).send({
           success: false,

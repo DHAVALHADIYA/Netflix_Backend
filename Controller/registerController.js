@@ -1,4 +1,5 @@
 const userModel = require("../Model/userModel");
+const OldUser = require("../Model/oldUserModel");
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 
@@ -6,42 +7,73 @@ const registerController = async (req, res) => {
   try {
     const { email, password } = req.body;
 
-    //check admin
-    const exisitingUser = await userModel.findOne({ email: email });
+    const oldUser = await OldUser.findOne({ email: email });
 
-    //if admin exist
-    if (exisitingUser) {
-      return res.status(409).send({
-        success: false,
-        message: "Already Registered please login",
+    if (oldUser) {
+      const dltuser = await OldUser.findOneAndDelete({ email: email });
+
+      if (dltuser) {
+        const existingUser = await userModel.findOne({ email: email });
+
+        if (existingUser) {
+          return res.status(409).send({
+            success: false,
+            message: "Already Registered. Please login.",
+          });
+        }
+
+        const saltRounds = 10;
+        const hashedPassword = await bcrypt.hash(password, saltRounds);
+
+        const user = await userModel.create({
+          email,
+          password: hashedPassword,
+        });
+
+        const token = jwt.sign({ user }, process.env.TOKEN_KEY);
+
+        if (user) {
+          return res.status(201).send({
+            success: true,
+            message: "Welcome back....",
+            token,
+            user,
+          });
+        }
+      }
+    } else {
+      const existingUser = await userModel.findOne({ email: email });
+
+      if (existingUser) {
+        return res.status(409).send({
+          success: false,
+          message: "Already Registered. Please login.",
+        });
+      }
+
+      const saltRounds = 10;
+      const hashedPassword = await bcrypt.hash(password, saltRounds);
+
+      const user = await userModel.create({
+        email,
+        password: hashedPassword,
       });
-    }
 
-    // Password Hashing
-    const saltRounds = 10;
-    const hashedPassword = await bcrypt.hash(password, saltRounds);
+      const token = jwt.sign({ user }, process.env.TOKEN_KEY);
 
-    //save the admin in database
-    const user = await userModel.create({
-      email,
-      password: hashedPassword,
-    });
-
-    // generate token for authentication
-    const token = jwt.sign({ user }, process.env.TOKEN_KEY);
-
-    if (user) {
-      res.status(201).send({
-        success: true,
-        message: "User Registered Successfully..",
-        token,
-        user,
-      });
+      if (user) {
+        return res.status(201).send({
+          success: true,
+          message: "User Registered Successfully.",
+          token,
+          user,
+        });
+      }
     }
   } catch (error) {
-    res.status(500).send({
+    return res.status(500).send({
       success: false,
-      message: "Error in Registeration",
+      message: "Error in Registration",
       error,
     });
   }
