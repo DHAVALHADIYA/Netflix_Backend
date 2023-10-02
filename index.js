@@ -23,9 +23,6 @@ app.get("/", (req, res) => {
   res.send("The backend is successfully deployed");
 });
 
-app.get("/hello", (req, res) => {
-  res.send("check");
-});
 
 app.listen(port, () => {
   console.log("The server is listening on the port " + port);
